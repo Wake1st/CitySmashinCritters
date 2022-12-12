@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+    //  Singleton setup
     public static GameController gameController { get; private set; }
 
     void Awake() {
@@ -12,5 +13,28 @@ public class GameController : MonoBehaviour
         } else {
             gameController = this;
         }
+    }
+
+    //  Operation
+    [SerializeField]
+    public List<GameObject> destructables;
+
+    void Update() {
+        CheckWinStatus();
+    }
+
+    void CheckWinStatus() {
+        foreach (GameObject destructable in destructables) {
+            bool isAlive = GameObject
+                .Find(destructable.name + "/Health")
+                .GetComponent<HealthController>()
+                .IsAlive();
+
+            if (isAlive) {
+                return;
+            }
+        }
+
+        print("you win!");
     }
 }

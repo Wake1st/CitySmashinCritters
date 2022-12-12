@@ -22,7 +22,6 @@ public class HealthController : MonoBehaviour
 
     public void TakeDamage(int damage) {
         health -= damage;
-        print(parent.name + " health " + health);
 
         if (health <= 0) {
             Die();
@@ -39,6 +38,6 @@ public class HealthController : MonoBehaviour
     }
 
     private void Die() {
-        Destroy(parent);
+        this.GetComponent<AnimationController>().StartCollapse();
     }
 }

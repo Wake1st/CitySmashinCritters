@@ -53,9 +53,7 @@ public class PlayerController : MonoBehaviour
 
             if (rotating) {
                 float rotationDirection = Input.GetButton("RotateCW") ? 1 : -1;
-                targetAngle += (tiltAngle * rotationDirection);
-                print("direction: " + rotationDirection + ", target: " + targetAngle);
-                
+                targetAngle += (tiltAngle * rotationDirection);                
                 rotationTarget = Quaternion.Euler(0, targetAngle, 0);
             }
         }

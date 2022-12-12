@@ -25,7 +25,6 @@ public class AttackController : MonoBehaviour
     void OnTriggerEnter(Collider collision) {
         if (collision.gameObject.layer == LayerMask.NameToLayer("destructable")) {
             enemy = collision.gameObject;
-            print("found enemy: " + enemy.name);
         }
     }
 
