@@ -27,7 +27,7 @@ public class GameController : MonoBehaviour
         foreach (GameObject destructable in destructables) {
             bool isAlive = GameObject
                 .Find(destructable.name + "/Health")
-                .GetComponent<HealthController>()
+                .GetComponent<DestructableHealthController>()
                 .IsAlive();
 
             if (isAlive) {
