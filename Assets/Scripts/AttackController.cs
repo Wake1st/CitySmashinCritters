@@ -32,7 +32,7 @@ public class AttackController : MonoBehaviour
         if (enemy != null) {
             GameObject
                 .Find(enemy.name + "/Health")
-                .GetComponent<HealthController>()
+                .GetComponent<DestructableHealthController>()
                 .TakeDamage(damage);
         }
     }
