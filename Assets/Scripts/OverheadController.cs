@@ -1,49 +1,42 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HUDController : MonoBehaviour
+public class OverheadController : MonoBehaviour
 {
     [SerializeField]
     private Slider healthBarAmount = null;
     [SerializeField]
-    private string timeTextMessage = null;
-    [SerializeField]
-    private TMPro.TextMeshProUGUI timeText = null;
-    [SerializeField]
     private float sliderFillSpeed = 0.5f;
+    [SerializeField]
+    private Canvas canvas;
+
     private float timeTillFill = 0;
-    
     private float currentHealthValue;
-    private float newHealthValue = 100;
-    private float timeInLevel;
+    private float newHealthValue = 50;
 
     void Start()
     {
         currentHealthValue = newHealthValue;
-        
-        CharacterHealthController.UpdateHealth += ChangeValue;
     }
 
     void Update()
     {
-        AddTime();
         NewBarValue();
     }
 
-    private void ChangeValue(int amount) {
-        newHealthValue = amount;
-        timeTillFill = 0;
+    void LateUpdate() {
+        LookAtPlayer(); //  TODO: maybe just an event call - doesn't need constant update
     }
 
-    private void AddTime() {
-        if (currentHealthValue > 0) {
-            timeInLevel += Time.deltaTime;
-            timeText.text = timeTextMessage 
-                + Math.Round(timeInLevel, 2).ToString();
-        }
+    private void LookAtPlayer() {
+        canvas.transform.forward = -Camera.main.transform.forward;
+    }
+
+    public void ChangeValue(int amount) {
+        newHealthValue = amount;
+        timeTillFill = 0;
     }
 
     private void NewBarValue() {

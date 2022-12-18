@@ -15,7 +15,7 @@ public class HealthController : MonoBehaviour
         health = maxHealth;
     }
 
-    public void TakeDamage(int damage) {
+    public virtual void TakeDamage(int damage) {
         health -= damage;
         Mathf.Clamp(health, 0, maxHealth);
 
