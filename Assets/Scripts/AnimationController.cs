@@ -21,7 +21,7 @@ public class AnimationController : MonoBehaviour
     private void UpdateCollapse() {
         Transform parentTransform = this.transform.parent.gameObject.transform;
         float topOfParent = topOfParent = parentTransform.localPosition.y 
-                + (parentTransform.transform.localScale.y / 2);
+                + (parentTransform.transform.localScale.y);
 
         parentTransform.Translate(
             new Vector3(0, -1, 0) * collapseSpeed * Time.deltaTime
