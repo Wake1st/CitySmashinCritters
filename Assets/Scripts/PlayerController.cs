@@ -14,8 +14,6 @@ public class PlayerController : MonoBehaviour
 
     public delegate void TransAtkDir(Vector3 direction);
     public static event TransAtkDir TranslateAttackDirection;
-    public delegate void RotAtkDir(Vector3 direction);
-    public static event RotAtkDir RotateAttackDirection;
     private Vector3 attackDirection;
 
     void Update()
