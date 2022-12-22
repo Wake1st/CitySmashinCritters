@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
 
     public delegate void TransAtkDir(Vector3 direction);
     public static event TransAtkDir TranslateAttackDirection;
+    public delegate void RotAtkDir(float angle);
+    public static event RotAtkDir RotateAttackDirection;
     private Vector3 attackDirection;
 
     void Update()
@@ -61,6 +63,8 @@ public class PlayerController : MonoBehaviour
                 float rotationDirection = Input.GetButton("RotateCW") ? 1 : -1;
                 targetAngle += (tiltAngle * rotationDirection);                
                 rotationTarget = Quaternion.Euler(0, targetAngle, 0);
+
+                RotateAttackDirection(targetAngle);
             }
         }
     }
