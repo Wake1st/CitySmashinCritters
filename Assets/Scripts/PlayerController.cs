@@ -12,13 +12,12 @@ public class PlayerController : MonoBehaviour
     private float targetAngle = 0;
     private float tiltAngle = 90;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    public delegate void TransAtkDir(Vector3 direction);
+    public static event TransAtkDir TranslateAttackDirection;
+    public delegate void RotAtkDir(float angle);
+    public static event RotAtkDir RotateAttackDirection;
+    private Vector3 attackDirection;
 
-    }
-
-    // Update is called once per frame
     void Update()
     {
         //  Movement
@@ -30,13 +29,22 @@ public class PlayerController : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");    
         float verticalInput = Input.GetAxis("Vertical");
 
-        transform.Translate(
-            new Vector3(
-                horizontalInput, 
-                0,
-                verticalInput
-            ) * moveSpeed * Time.deltaTime
+        Vector3 direction = new Vector3(
+            horizontalInput, 
+            0,
+            verticalInput
         );
+
+        transform.Translate(
+            direction * moveSpeed * Time.deltaTime
+        );
+
+        if (direction.x == 0 && direction.z == 0) {
+            return;
+        }
+
+        Vector3 normalizeDirection = Vector3.Normalize(direction);
+        TranslateAttackDirection(normalizeDirection);
     }
 
     private void Rotate() {
@@ -55,6 +63,8 @@ public class PlayerController : MonoBehaviour
                 float rotationDirection = Input.GetButton("RotateCW") ? 1 : -1;
                 targetAngle += (tiltAngle * rotationDirection);                
                 rotationTarget = Quaternion.Euler(0, targetAngle, 0);
+
+                RotateAttackDirection(targetAngle);
             }
         }
     }
