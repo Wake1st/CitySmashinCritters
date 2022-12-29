@@ -5,6 +5,7 @@ using UnityEngine;
 public class AttackController : MonoBehaviour
 {
     public int damage = 10;
+    public Animator animator;
 
     private float nextFire = 0.5F;
     private float myTime = 0.0F;
@@ -15,10 +16,13 @@ public class AttackController : MonoBehaviour
     {
         myTime = myTime + Time.deltaTime;
 
-        if (Input.GetButton("Fire1") && myTime > nextFire)
-        {
-            Attack();
-            myTime = 0.0F;
+        if (myTime > nextFire) {
+            if (Input.GetButton("Fire1")) {
+                Attack();
+                myTime = 0.0F;
+            } else {
+                animator.SetBool("Attacking", false);
+            }
         }
     }
 
@@ -35,5 +39,7 @@ public class AttackController : MonoBehaviour
                 .GetComponent<DestructableHealthController>()
                 .TakeDamage(damage);
         }
+
+        animator.SetBool("Attacking", true);
     }
 }

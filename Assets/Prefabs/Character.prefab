@@ -85,6 +85,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 1.2
   rotationSpeed: 16
+  animator: {fileID: 1716486309732078399}
 --- !u!136 &877235643463372759
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -459,6 +460,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
+  animator: {fileID: 1716486309732078399}
 --- !u!114 &1622038469097246852
 MonoBehaviour:
   m_ObjectHideFlags: 0
