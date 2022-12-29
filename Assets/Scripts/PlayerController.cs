@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 1.2f;
     public float rotationSpeed = 10;
+    public Animator animator;
     
     private bool rotating = false;
     private Quaternion rotationTarget;
@@ -17,6 +18,7 @@ public class PlayerController : MonoBehaviour
     public delegate void RotAtkDir(float angle);
     public static event RotAtkDir RotateAttackDirection;
     private Vector3 attackDirection;
+
 
     void Update()
     {
@@ -40,8 +42,11 @@ public class PlayerController : MonoBehaviour
         );
 
         if (direction.x == 0 && direction.z == 0) {
+            animator.SetBool("Moving", false);
             return;
         }
+
+        animator.SetBool("Moving", true);
 
         Vector3 normalizeDirection = Vector3.Normalize(direction);
         TranslateAttackDirection(normalizeDirection);

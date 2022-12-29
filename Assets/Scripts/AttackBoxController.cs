@@ -30,9 +30,7 @@ public class AttackBoxController : MonoBehaviour
     }
 
     private void RotateAttackBox(float angle) {
-        // currentAngle = angle % 360;
         currentAngle = (int)(angle / 90) % 4;
-        print(currentAngle);
     }
 
     private Vector3 RepositionDirection(Vector3 direction) {
