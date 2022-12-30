@@ -12,6 +12,9 @@ public class AttackController : MonoBehaviour
 
     private GameObject enemy;
 
+    public delegate void AtkEvt();
+    public static event AtkEvt AttackEvent;
+
     void Update()
     {
         myTime = myTime + Time.deltaTime;
@@ -41,5 +44,7 @@ public class AttackController : MonoBehaviour
         }
 
         animator.SetBool("Attacking", true);
+
+        AttackEvent();
     }
 }
