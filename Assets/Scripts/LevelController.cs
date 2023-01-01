@@ -44,8 +44,6 @@ public class LevelController : MonoBehaviour
 
     void CheckWinStatus() {
         foreach (GameObject destructable in destructables) {
-            print(destructable.name);
-
             bool isAlive = GameObject
                 .Find(destructable.name + "/Health")
                 .GetComponent<DestructableHealthController>()
