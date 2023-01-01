@@ -14,27 +14,4 @@ public class GameController : MonoBehaviour
             gameController = this;
         }
     }
-
-    //  Operation
-    [SerializeField]
-    public List<GameObject> destructables;
-
-    void Update() {
-        CheckWinStatus();
-    }
-
-    void CheckWinStatus() {
-        foreach (GameObject destructable in destructables) {
-            bool isAlive = GameObject
-                .Find(destructable.name + "/Health")
-                .GetComponent<DestructableHealthController>()
-                .IsAlive();
-
-            if (isAlive) {
-                return;
-            }
-        }
-
-        print("you win!");
-    }
 }
