@@ -29,10 +29,14 @@ public class AttackController : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter(Collider collision) {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("destructable")) {
-            enemy = collision.gameObject;
+    void OnTriggerEnter(Collider collider) {
+        if (collider.gameObject.layer == LayerMask.NameToLayer("destructable")) {
+            enemy = collider.gameObject;
         }
+    }
+
+    void OnTriggerExit(Collider collider) {
+        enemy = null;
     }
 
     private void Attack() {
