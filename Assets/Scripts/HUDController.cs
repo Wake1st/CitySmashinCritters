@@ -25,11 +25,12 @@ public class HUDController : MonoBehaviour
         currentHealthValue = newHealthValue;
         
         CharacterHealthController.UpdateHealth += ChangeValue;
+        LevelController.UpdateTime += SetTime;
     }
 
     void Update()
     {
-        AddTime();
+        UpdateTimer();
         NewBarValue();
     }
 
@@ -38,9 +39,12 @@ public class HUDController : MonoBehaviour
         timeTillFill = 0;
     }
 
-    private void AddTime() {
+    private void SetTime(float time) {
+        timeInLevel = time;
+    }
+
+    private void UpdateTimer() {
         if (currentHealthValue > 0) {
-            timeInLevel += Time.deltaTime;
             timeText.text = timeTextMessage 
                 + Math.Round(timeInLevel, 2).ToString();
         }

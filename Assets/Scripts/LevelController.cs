@@ -10,11 +10,20 @@ public class LevelController : MonoBehaviour
     private int maxDestructables = 12;
     private List<GameObject> destructables = new List<GameObject>();
 
+    public float countdown = 3f;
+    
     private bool hasWon = false;
     private int score = 0;
     private float timeInLevel = 0f;
     [SerializeField]
     private int destructionWinCondition = 5;
+
+    public delegate void TimeChange(float time);
+    public static event TimeChange UpdateTime;
+
+    private bool isPlaying = false;
+    public delegate void PlayCheck(bool isPlaying);
+    public static event PlayCheck UpdateIsPlaying;
 
     void Awake() {
         Instantiate(playerPrefab, transform.position, transform.rotation);
@@ -44,10 +53,21 @@ public class LevelController : MonoBehaviour
     }
 
     void Update() {
-        timeInLevel += Time.deltaTime;
+        if (isPlaying) {
+            if (!hasWon) {
+                CheckWinStatus();
 
-        if (!hasWon) {
-            CheckWinStatus();
+                timeInLevel += Time.deltaTime;
+                UpdateTime(timeInLevel);
+            }
+        } else {
+            countdown -= Time.deltaTime;
+
+            isPlaying = countdown < 0;
+
+            if (isPlaying) {
+                UpdateIsPlaying(isPlaying);
+            }
         }
     }
 
