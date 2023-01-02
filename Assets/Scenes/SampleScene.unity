@@ -1837,6 +1837,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 4839742413397361368, guid: 2d0c8fe538839084d8306de9e283092d, type: 3}
   buildingPrefab: {fileID: 5277587021917206540, guid: 1eba3e97af7cc914fa6c39232550b5fb, type: 3}
+  destructionWinCondition: 5
 --- !u!4 &842666720
 Transform:
   m_ObjectHideFlags: 0
@@ -3779,7 +3780,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: c69598f7a6db93a4c828b94567f75609, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.707
+  m_Volume: 0.403
   m_Pitch: 1
   Loop: 0
   Mute: 0
