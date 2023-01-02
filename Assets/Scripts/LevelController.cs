@@ -10,7 +10,9 @@ public class LevelController : MonoBehaviour
     private int maxDestructables = 12;
     private List<GameObject> destructables = new List<GameObject>();
 
-    public float countdown = 3f;
+    public float countdown = 3.8f;
+    private float maxLvlStartMsgTime = 1.6f;
+    private string countdownMsg;
     
     private bool hasWon = false;
     private int score = 0;
@@ -25,9 +27,15 @@ public class LevelController : MonoBehaviour
     public delegate void PlayCheck(bool isPlaying);
     public static event PlayCheck UpdateIsPlaying;
 
+    private int countdownSeconds;
+    public delegate void CountdownChange(string text);
+    public static event CountdownChange UpdateCountdown;
+
     void Awake() {
         Instantiate(playerPrefab, transform.position, transform.rotation);
         InitDestructables();
+
+        countdownSeconds = Mathf.CeilToInt(countdown);
     }
 
     void InitDestructables() {
@@ -59,15 +67,37 @@ public class LevelController : MonoBehaviour
 
                 timeInLevel += Time.deltaTime;
                 UpdateTime(timeInLevel);
+
+                //  Remove the countdown UI
+                if (countdownMsg != null) {
+                    countdownMsg = timeInLevel > maxLvlStartMsgTime 
+                        ? null 
+                        : countdownMsg;
+
+                    UpdateCountdown(countdownMsg);
+                }
             }
         } else {
             countdown -= Time.deltaTime;
+            CheckCountdownSeconds();
 
             isPlaying = countdown < 0;
-
             if (isPlaying) {
                 UpdateIsPlaying(isPlaying);
             }
+        }
+    }
+
+    void CheckCountdownSeconds() {
+        //  switch the seconds of the countdown
+        if (Mathf.CeilToInt(countdown) != countdownSeconds) {
+            countdownSeconds = Mathf.CeilToInt(countdown);
+
+            countdownMsg = countdownSeconds > 0 
+                ? countdownSeconds.ToString() 
+                : "GO";
+            
+            UpdateCountdown(countdownMsg);
         }
     }
 
