@@ -19,12 +19,23 @@ public class PlayerController : MonoBehaviour
     public static event RotAtkDir RotateAttackDirection;
     private Vector3 attackDirection;
 
+    private bool isPlaying;
 
+    private void Start() {
+        LevelController.UpdateIsPlaying += SetIsPlaying;
+    }
+    
     void Update()
     {
-        //  Movement
-        Translate();
-        Rotate();
+        if (isPlaying) {
+            //  Movement
+            Translate();
+            Rotate();
+        }
+    }
+
+    void SetIsPlaying(bool playing) {
+        isPlaying = playing;
     }
 
     private void Translate() {
