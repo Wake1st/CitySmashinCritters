@@ -1837,6 +1837,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 4839742413397361368, guid: 2d0c8fe538839084d8306de9e283092d, type: 3}
   buildingPrefab: {fileID: 5277587021917206540, guid: 1eba3e97af7cc914fa6c39232550b5fb, type: 3}
+  countdown: 3
   destructionWinCondition: 5
 --- !u!4 &842666720
 Transform:
@@ -3775,7 +3776,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1837716109}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: c69598f7a6db93a4c828b94567f75609, type: 3}

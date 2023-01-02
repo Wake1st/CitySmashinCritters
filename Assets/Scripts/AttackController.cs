@@ -15,18 +15,30 @@ public class AttackController : MonoBehaviour
     public delegate void AtkEvt();
     public static event AtkEvt AttackEvent;
 
+    private bool isPlaying;
+
+    private void Start() {
+        LevelController.UpdateIsPlaying += SetIsPlaying;
+    }
+
     void Update()
     {
-        myTime = myTime + Time.deltaTime;
+        if (isPlaying) {
+            myTime = myTime + Time.deltaTime;
 
-        if (myTime > nextFire) {
-            if (Input.GetButton("Fire1")) {
-                Attack();
-                myTime = 0.0F;
-            } else {
-                animator.SetBool("Attacking", false);
+            if (myTime > nextFire) {
+                if (Input.GetButton("Fire1")) {
+                    Attack();
+                    myTime = 0.0F;
+                } else {
+                    animator.SetBool("Attacking", false);
+                }
             }
         }
+    }
+
+    void SetIsPlaying(bool playing) {
+        isPlaying = playing;
     }
 
     void OnTriggerEnter(Collider collider) {
