@@ -114,10 +114,9 @@ public class LevelController : MonoBehaviour
                 destroyedEnemies++;
 
                 if (destroyedEnemies >= destructionWinCondition) {
-                    print("you win!");
                     hasWon = true;
                     score = (int)(destroyedEnemies / timeInLevel * 10000);
-                    print(score);
+                    print("you win! " + score);
                 }
             }
         }
