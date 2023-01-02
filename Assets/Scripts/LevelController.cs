@@ -10,9 +10,14 @@ public class LevelController : MonoBehaviour
     private int maxDestructables = 12;
     private List<GameObject> destructables = new List<GameObject>();
 
+    private bool hasWon = false;
+    private int score = 0;
+    private float timeInLevel = 0f;
+    [SerializeField]
+    private int destructionWinCondition = 5;
+
     void Awake() {
         Instantiate(playerPrefab, transform.position, transform.rotation);
-
         InitDestructables();
     }
 
@@ -39,23 +44,33 @@ public class LevelController : MonoBehaviour
     }
 
     void Update() {
-        CheckWinStatus();
+        timeInLevel += Time.deltaTime;
+
+        if (!hasWon) {
+            CheckWinStatus();
+        }
     }
 
     void CheckWinStatus() {
-        foreach (GameObject destructable in destructables) {
-            print(destructable.name);
+        int destroyedEnemies = 0;
 
+        foreach (GameObject destructable in destructables) {
             bool isAlive = GameObject
                 .Find(destructable.name + "/Health")
                 .GetComponent<DestructableHealthController>()
                 .IsAlive();
 
-            if (isAlive) {
-                return;
+            if (!isAlive) {
+                destroyedEnemies++;
+
+                if (destroyedEnemies >= destructionWinCondition) {
+                    print("you win!");
+                    hasWon = true;
+                    score = (int)(destroyedEnemies / timeInLevel * 10000);
+                    print(score);
+                }
             }
         }
 
-        print("you win!");
     }
 }
