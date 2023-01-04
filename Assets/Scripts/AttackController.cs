@@ -6,8 +6,10 @@ public class AttackType {
     public char keybinding;
     public int damage;
     public float cooldown;
+    public AudioSource soundFx;
+    public float pitchMultiplier;
 
-    public AttackType(char key, int dmg, float cool = 0) {
+    public AttackType(char key, int dmg, string soundClipPath, float pitchMultiplier = 1, float cool = 0) {
         keybinding = key;
         damage = dmg;
 
@@ -16,6 +18,11 @@ public class AttackType {
         } else {
             cooldown = (float)dmg/10;
         }
+
+        GameObject gameObject = GameObject.Find("AttackSounds");
+        soundFx = gameObject.AddComponent<AudioSource>();
+        soundFx.clip = Resources.Load<AudioClip>(soundClipPath);
+        soundFx.pitch = pitchMultiplier;
     }
 }
 
@@ -28,26 +35,27 @@ public class AttackProfile {
     public AttackType heavySpecial;
 
     public AttackProfile() {
-        lightPunch = new AttackType('l', 6);
-        lightKick = new AttackType('k', 8);
-        lightSpecial = new AttackType('j', 12);
-        heavyPunch = new AttackType('o', 10);
-        heavyKick = new AttackType('i', 14);
-        heavySpecial = new AttackType('u', 20);
+        lightPunch = new AttackType('l', 6, "SoundEffects/Punch");
+        lightKick = new AttackType('k', 8, "SoundEffects/Kick");
+        lightSpecial = new AttackType('j', 12, "SoundEffects/Special");
+        heavyPunch = new AttackType('o', 10, "SoundEffects/Punch", 0.8f);
+        heavyKick = new AttackType('i', 14, "SoundEffects/Kick", 0.8f);
+        heavySpecial = new AttackType('u', 20, "SoundEffects/Special", 1.2f);
     }
 }
 
 public class AttackController : MonoBehaviour
 {
-    private AttackProfile attackProfile;
     public Animator animator;
+    [SerializeField]
+    private AttackProfile attackProfile;
 
     private float nextFire = 0.5F;
     private float myTime = 0.0F;
 
     private GameObject enemy;
 
-    public delegate void AtkEvt();
+    public delegate void AtkEvt(AudioSource audioSource);
     public static event AtkEvt AttackEvent;
 
     private bool isPlaying;
@@ -78,7 +86,6 @@ public class AttackController : MonoBehaviour
                     Attack(attack);
                     myTime = 0.0F;
                     nextFire = attack.cooldown;
-                    print(nextFire);
                 } else {
                     animator.SetBool("Attacking", false);
                 }
@@ -102,32 +109,26 @@ public class AttackController : MonoBehaviour
 
     private AttackType CheckAttack() {
         if (Input.GetButtonDown("LightPunch")) {
-            print("lightPunch");
             return attackProfile.lightPunch;
         }
 
         if (Input.GetButtonDown("LightKick")) {
-            print("lightKick");
             return attackProfile.lightKick;
         }
 
         if (Input.GetButtonDown("LightSpecial")) {
-            print("lightSpecial");
             return attackProfile.lightSpecial;
         }
 
         if (Input.GetButtonDown("HeavyPunch")) {
-            print("heavyPunch");
             return attackProfile.heavyPunch;
         }
 
         if (Input.GetButtonDown("HeavyKick")) {
-            print("heavyKick");
             return attackProfile.heavyKick;
         }
 
         if (Input.GetButtonDown("HeavySpecial")) {
-            print("heavySpecial");
             return attackProfile.heavySpecial;
         }
 
@@ -143,7 +144,7 @@ public class AttackController : MonoBehaviour
         }
 
         animator.SetBool("Attacking", true);
-
-        AttackEvent();
+        
+        AttackEvent(attack.soundFx);
     }
 }
