@@ -7,15 +7,13 @@ public class DestructableHealthController : HealthController {
     [SerializeField]
     private RectTransform panel;
 
-    protected override void Die() {
-        this.GetComponent<AnimationController>().StartCollapse();
-    }
-
     public override void TakeDamage(int damage) {
         health -= damage;
         Mathf.Clamp(health, 0, maxHealth);
 
         UpdateUI(health);
+
+        this.GetComponent<BuildingSoundsController>().PlayHitSound();
 
         if (health <= 0) {
             Die();
@@ -24,5 +22,10 @@ public class DestructableHealthController : HealthController {
 
     private void UpdateUI(int damage) {
         panel.GetComponent<OverheadController>().ChangeValue(damage);
+    }
+
+    protected override void Die() {
+        this.GetComponent<AnimationController>().StartCollapse();
+        this.GetComponent<BuildingSoundsController>().PlayDeathSound();
     }
 }
