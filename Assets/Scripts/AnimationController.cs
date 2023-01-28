@@ -18,11 +18,6 @@ public class AnimationController : MonoBehaviour
     attackProfile = new AttackProfile();
   }
 
-  void Start()
-  {
-    AttackController.AttackEvent += BuildingHitHandler;
-  }
-
   private void Update()
   {
     if (collapsing)
@@ -49,7 +44,7 @@ public class AnimationController : MonoBehaviour
     collapsing = topOfParent > 0;
   }
 
-  private void Shake(float shake = 8)
+  public void Shake(float shake = 8)
   {
     //  set the building to rotate
     Quaternion localRotate = Quaternion.Euler(
@@ -57,19 +52,11 @@ public class AnimationController : MonoBehaviour
         0,
         Random.Range(-shake, shake)
     );
-    // parent.rotation = upright;
+    parent.rotation = upright;
     parent.rotation = localRotate;
-    // print(parent.name + " | " + parent.rotation.eulerAngles);
+    print(parent.name + " | " + parent.rotation.eulerAngles);
 
     //  set the colider to the upright position
     parent.GetComponent<BoxCollider>().transform.rotation = upright;
-  }
-
-  private void BuildingHitHandler(int index)
-  {
-    print(attackProfile.attackTypes);
-    float shake = attackProfile.attackTypes[index].shake;
-
-    Shake(shake);
   }
 }

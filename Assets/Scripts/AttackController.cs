@@ -113,13 +113,18 @@ public class AttackController : MonoBehaviour
   {
     if (enemy != null)
     {
-      GameObject
-          .Find(enemy.name + "/Health")
-          .GetComponent<DestructableHealthController>()
-          .TakeDamage(attack.damage);
+      GameObject enemyHealth = GameObject.Find(enemy.name + "/Health");
+
+      enemyHealth.GetComponent<DestructableHealthController>()
+        .TakeDamage(attack.damage);
+
+      enemyHealth.GetComponent<AnimationController>()
+        .Shake(attack.shake);
     }
 
     animator.SetBool("Attacking", true);
+
+
 
     AttackEvent(attack.id);
   }
