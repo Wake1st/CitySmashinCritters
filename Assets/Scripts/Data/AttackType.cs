@@ -24,7 +24,7 @@ public class AttackType
     id = ID;
     keybinding = key;
     damage = dmg;
-    shake = dmg * 2.4f;
+    shake = dmg;
 
     if (cool > 0)
     {

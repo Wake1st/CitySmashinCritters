@@ -119,12 +119,10 @@ public class AttackController : MonoBehaviour
         .TakeDamage(attack.damage);
 
       enemyHealth.GetComponent<AnimationController>()
-        .Shake(attack.shake);
+        .StartShake(attack.shake);
     }
 
     animator.SetBool("Attacking", true);
-
-
 
     AttackEvent(attack.id);
   }
