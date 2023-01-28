@@ -1,32 +1,90 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AnimationController : MonoBehaviour
 {
-    public float collapseSpeed = 1;
+  private Quaternion upright;
 
-    private bool collapsing = false;
+  public float collapseSpeed = 1;
+  private bool collapsing = false;
 
-    private void Update() {
-        if (collapsing) {
-            UpdateCollapse();
-        }
+  private bool isHit = false;
+  private float shakeAmount;
+  private float shakeTime = 0.2f;
+  private float shakeCountdown;
+
+  private AttackProfile attackProfile;
+  private Transform parent;
+
+  private void Awake()
+  {
+    upright = this.transform.rotation;
+    parent = this.transform.parent;
+
+    attackProfile = new AttackProfile();
+
+    shakeCountdown = shakeTime;
+  }
+
+  private void Update()
+  {
+    if (collapsing)
+    {
+      Sink();
+      Shake();
     }
-
-    public void StartCollapse() {
-        collapsing = true;
+    else if (isHit)
+    {
+      shakeCountdown -= Time.deltaTime;
+      if (shakeCountdown > 0)
+      {
+        Shake(shakeAmount);
+      }
+      else
+      {
+        EndShake();
+        isHit = false;
+      }
     }
+  }
 
-    private void UpdateCollapse() {
-        Transform parentTransform = this.transform.parent.gameObject.transform;
-        float topOfParent = topOfParent = parentTransform.localPosition.y 
-                + (parentTransform.transform.localScale.y);
+  public void StartCollapse()
+  {
+    collapsing = true;
+  }
 
-        parentTransform.Translate(
-            new Vector3(0, -1, 0) * collapseSpeed * Time.deltaTime
-        );
+  private void Sink()
+  {
+    float topOfParent = topOfParent = parent.localPosition.y
+            + (parent.transform.localScale.y);
 
-        collapsing = topOfParent > 0;
-    }
+    parent.Translate(
+        new Vector3(0, -1, 0) * collapseSpeed * Time.deltaTime
+    );
+
+    collapsing = topOfParent > 0;
+  }
+
+  private void Shake(float shake = 6)
+  {
+    //  set the building to rotate
+    Quaternion localRotate = Quaternion.Euler(
+        Random.Range(-shake, shake),
+        0,
+        Random.Range(-shake, shake)
+    );
+    parent.rotation = localRotate;
+  }
+
+  public void StartShake(float shake)
+  {
+    shakeAmount = shake;
+
+    shakeCountdown = shakeTime;
+    isHit = true;
+  }
+
+  private void EndShake()
+  {
+    parent.rotation = upright;
+  }
 }
