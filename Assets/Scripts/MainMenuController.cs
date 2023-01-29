@@ -1,14 +1,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
-public class PauseMenuController : MonoBehaviour
+public class MainMenuController : MonoBehaviour
 {
-  public GameObject pauseScreen;
+  public GameObject mainScreen;
   public GameObject optionsScreen;
   public GameObject quitScreen;
 
-  public Button resumeGameButton;
+  public Button playGame;
   public Button optionsButton;
   public Button quitGameButton;
   public Button returnButton;
@@ -18,12 +19,13 @@ public class PauseMenuController : MonoBehaviour
   public Button confirmQuitButton;
   public Button cancelQuitButton;
 
-  private bool paused;
+  public string firstScene;
   private bool otherMenu;
+
 
   void Start()
   {
-    pauseScreen.SetActive(false);
+    mainScreen.SetActive(true);
     optionsScreen.SetActive(false);
     quitScreen.SetActive(false);
   }
@@ -37,32 +39,22 @@ public class PauseMenuController : MonoBehaviour
   {
     if (Input.GetButtonDown("Cancel"))
     {
-      paused = !paused;
+      QuitConfirmation();
     }
 
-    if (paused)
+    Time.timeScale = 0;
+
+    mainScreen.SetActive(!otherMenu);
+
+    if (EventSystem.current.currentSelectedGameObject == null)
     {
-      Time.timeScale = 0;
-
-      pauseScreen.SetActive(!otherMenu);
-
-      if (EventSystem.current.currentSelectedGameObject == null)
-      {
-        resumeGameButton.Select();
-      }
+      playGame.Select();
     }
-    else
-    {
-      otherMenu = false;
+  }
 
-      pauseScreen.SetActive(false);
-      optionsScreen.SetActive(false);
-      quitScreen.SetActive(false);
-
-      EventSystem.current.SetSelectedGameObject(null);
-
-      Time.timeScale = 1;
-    }
+  public void Play()
+  {
+    SceneManager.LoadScene(firstScene);
   }
 
   public void Options()
@@ -85,13 +77,8 @@ public class PauseMenuController : MonoBehaviour
     optionsScreen.SetActive(false);
     quitScreen.SetActive(false);
 
-    pauseScreen.SetActive(true);
-    resumeGameButton.Select();
-  }
-
-  public void UnPause()
-  {
-    paused = false;
+    mainScreen.SetActive(true);
+    playGame.Select();
   }
 
   public void QuitGame()
