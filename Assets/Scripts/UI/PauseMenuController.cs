@@ -1,12 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class PauseMenuController : MonoBehaviour
 {
   public GameObject pauseScreen;
   public GameObject optionsScreen;
-  public GameObject quitScreen;
+  public GameObject quitLevelScreen;
+  public GameObject quitGameScreen;
+
+  public string menuScene;
 
   public Button resumeGameButton;
   public Button optionsButton;
@@ -15,8 +19,10 @@ public class PauseMenuController : MonoBehaviour
   public Button audioButton;
   public Button videoButton;
   public Button gameplayButton;
-  public Button confirmQuitButton;
-  public Button cancelQuitButton;
+  public Button confirmQuitLevelButton;
+  public Button cancelQuitLevelButton;
+  public Button confirmQuitGameButton;
+  public Button cancelQuitGameButton;
 
   private bool paused;
   private bool otherMenu;
@@ -25,7 +31,7 @@ public class PauseMenuController : MonoBehaviour
   {
     pauseScreen.SetActive(false);
     optionsScreen.SetActive(false);
-    quitScreen.SetActive(false);
+    quitGameScreen.SetActive(false);
   }
 
   void Update()
@@ -57,7 +63,8 @@ public class PauseMenuController : MonoBehaviour
 
       pauseScreen.SetActive(false);
       optionsScreen.SetActive(false);
-      quitScreen.SetActive(false);
+      quitLevelScreen.SetActive(false);
+      quitGameScreen.SetActive(false);
 
       EventSystem.current.SetSelectedGameObject(null);
 
@@ -72,26 +79,39 @@ public class PauseMenuController : MonoBehaviour
     returnButton.Select();
   }
 
-  public void QuitConfirmation()
-  {
-    otherMenu = true;
-    quitScreen.SetActive(true);
-    cancelQuitButton.Select();
-  }
-
   public void Back()
   {
     otherMenu = false;
     optionsScreen.SetActive(false);
-    quitScreen.SetActive(false);
+    quitLevelScreen.SetActive(false);
+    quitGameScreen.SetActive(false);
 
     pauseScreen.SetActive(true);
     resumeGameButton.Select();
   }
 
+  public void QuitLevelConfirmation()
+  {
+    otherMenu = true;
+    quitLevelScreen.SetActive(true);
+    cancelQuitLevelButton.Select();
+  }
+
+  public void QuitGameConfirmation()
+  {
+    otherMenu = true;
+    quitGameScreen.SetActive(true);
+    cancelQuitGameButton.Select();
+  }
+
   public void UnPause()
   {
     paused = false;
+  }
+
+  public void QuitLevel()
+  {
+    SceneManager.LoadScene(menuScene);
   }
 
   public void QuitGame()
