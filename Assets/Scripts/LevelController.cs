@@ -1,125 +1,148 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelController : MonoBehaviour
 {
-    public GameObject playerPrefab;
-    public GameObject buildingPrefab;
+  public GameObject playerPrefab;
+  public GameObject buildingPrefab;
+  public GameObject scoreCardUI;
+  public GameObject HUD;
 
-    private int maxDestructables = 12;
-    private List<GameObject> destructables = new List<GameObject>();
+  private int maxDestructables = 12;
+  private List<GameObject> destructables = new List<GameObject>();
 
-    public float countdown = 3.8f;
-    private float maxLvlStartMsgTime = 1.6f;
-    private string countdownMsg;
-    
-    private bool hasWon = false;
-    private int score = 0;
-    private float timeInLevel = 0f;
-    [SerializeField]
-    private int destructionWinCondition = 5;
+  public float countdown = 3.8f;
+  private float maxLvlStartMsgTime = 1.6f;
+  private string countdownMsg;
 
-    public delegate void TimeChange(float time);
-    public static event TimeChange UpdateTime;
+  private bool hasWon = false;
+  private int score = 0;
+  private float timeInLevel = 0f;
+  [SerializeField]
+  private int destructionWinCondition = 5;
 
-    private bool isPlaying = false;
-    public delegate void PlayCheck(bool isPlaying);
-    public static event PlayCheck UpdateIsPlaying;
+  public delegate void TimeChange(float time);
+  public static event TimeChange UpdateTime;
 
-    private int countdownSeconds;
-    public delegate void CountdownChange(string text);
-    public static event CountdownChange UpdateCountdown;
+  private bool isPlaying = false;
+  public delegate void PlayCheck(bool isPlaying);
+  public static event PlayCheck UpdateIsPlaying;
 
-    void Awake() {
-        Instantiate(playerPrefab, transform.position, transform.rotation);
-        InitDestructables();
+  private int countdownSeconds;
+  public delegate void CountdownChange(string text);
+  public static event CountdownChange UpdateCountdown;
 
-        countdownSeconds = Mathf.CeilToInt(countdown);
+  void Awake()
+  {
+    Instantiate(playerPrefab, transform.position, transform.rotation);
+    InitDestructables();
+
+    countdownSeconds = Mathf.CeilToInt(countdown);
+  }
+
+  void InitDestructables()
+  {
+    Vector2 gridSize = new Vector2(4, 3);
+    Vector2 gridOffset = new Vector2(-1.5f, -1.5f);
+
+    for (int i = 0; i < maxDestructables; i++)
+    {
+      GameObject building = Instantiate(
+          buildingPrefab,
+          new Vector3(
+              gridOffset.x + i % gridSize.x + Random.Range(-0.2f, 0.2f),
+              0.5f,
+              gridOffset.y + i / (int)gridSize.y + Random.Range(-0.3f, -0.3f)
+          ),
+          transform.rotation
+      );
+
+      //  must rename for a unique name
+      building.name += i.ToString();
+
+      destructables.Add(building);
     }
+  }
 
-    void InitDestructables() {
-        Vector2 gridSize = new Vector2(4, 3);
-        Vector2 gridOffset = new Vector2(-1.5f, -1.5f);
+  void Update()
+  {
+    if (isPlaying)
+    {
+      if (!hasWon)
+      {
+        CheckWinStatus();
 
-        for (int i=0; i < maxDestructables; i++) {
-            GameObject building = Instantiate(
-                buildingPrefab, 
-                new Vector3(
-                    gridOffset.x + i % gridSize.x + Random.Range(-0.2f, 0.2f), 
-                    0.5f,
-                    gridOffset.y + i / (int)gridSize.y + Random.Range(-0.3f, -0.3f)
-                ),
-                transform.rotation
-            );
+        timeInLevel += Time.deltaTime;
+        UpdateTime(timeInLevel);
 
-            //  must rename for a unique name
-            building.name += i.ToString();
+        //  Remove the countdown UI
+        if (countdownMsg != null)
+        {
+          countdownMsg = timeInLevel > maxLvlStartMsgTime
+              ? null
+              : countdownMsg;
 
-            destructables.Add(building);
+          UpdateCountdown(countdownMsg);
         }
+      }
     }
+    else
+    {
+      countdown -= Time.deltaTime;
+      CheckCountdownSeconds();
 
-    void Update() {
-        if (isPlaying) {
-            if (!hasWon) {
-                CheckWinStatus();
+      isPlaying = countdown < 0;
+      if (isPlaying)
+      {
+        UpdateIsPlaying(isPlaying);
+      }
+    }
+  }
 
-                timeInLevel += Time.deltaTime;
-                UpdateTime(timeInLevel);
+  void CheckCountdownSeconds()
+  {
+    //  switch the seconds of the countdown
+    if (Mathf.CeilToInt(countdown) != countdownSeconds)
+    {
+      countdownSeconds = Mathf.CeilToInt(countdown);
 
-                //  Remove the countdown UI
-                if (countdownMsg != null) {
-                    countdownMsg = timeInLevel > maxLvlStartMsgTime 
-                        ? null 
-                        : countdownMsg;
+      countdownMsg = countdownSeconds > 0
+          ? countdownSeconds.ToString()
+          : "GO";
 
-                    UpdateCountdown(countdownMsg);
-                }
-            }
-        } else {
-            countdown -= Time.deltaTime;
-            CheckCountdownSeconds();
+      UpdateCountdown(countdownMsg);
+    }
+  }
 
-            isPlaying = countdown < 0;
-            if (isPlaying) {
-                UpdateIsPlaying(isPlaying);
-            }
+  void CheckWinStatus()
+  {
+    int destroyedEnemies = 0;
+
+    foreach (GameObject destructable in destructables)
+    {
+      bool isAlive = GameObject
+          .Find(destructable.name + "/Health")
+          .GetComponent<DestructableHealthController>()
+          .IsAlive();
+
+      if (!isAlive)
+      {
+        destroyedEnemies++;
+
+        if (destroyedEnemies >= destructionWinCondition)
+        {
+          hasWon = true;
+          score = (int)(destroyedEnemies / timeInLevel * 10000);
+
+          HUD.SetActive(false);
+
+          Instantiate(scoreCardUI);
+          scoreCardUI
+            .GetComponent<ScoreController>()
+            .UpdateScore(score);
+
         }
+      }
     }
-
-    void CheckCountdownSeconds() {
-        //  switch the seconds of the countdown
-        if (Mathf.CeilToInt(countdown) != countdownSeconds) {
-            countdownSeconds = Mathf.CeilToInt(countdown);
-
-            countdownMsg = countdownSeconds > 0 
-                ? countdownSeconds.ToString() 
-                : "GO";
-            
-            UpdateCountdown(countdownMsg);
-        }
-    }
-
-    void CheckWinStatus() {
-        int destroyedEnemies = 0;
-
-        foreach (GameObject destructable in destructables) {
-            bool isAlive = GameObject
-                .Find(destructable.name + "/Health")
-                .GetComponent<DestructableHealthController>()
-                .IsAlive();
-
-            if (!isAlive) {
-                destroyedEnemies++;
-
-                if (destroyedEnemies >= destructionWinCondition) {
-                    hasWon = true;
-                    score = (int)(destroyedEnemies / timeInLevel * 10000);
-                    print("you win! " + score);
-                }
-            }
-        }
-
-    }
+  }
 }
