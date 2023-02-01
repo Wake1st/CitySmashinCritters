@@ -6,6 +6,7 @@ public class LevelController : MonoBehaviour
   public GameObject playerPrefab;
   public GameObject buildingPrefab;
   public GameObject scoreCardUI;
+  public GameObject HUD;
 
   private int maxDestructables = 12;
   private List<GameObject> destructables = new List<GameObject>();
@@ -133,10 +134,13 @@ public class LevelController : MonoBehaviour
           hasWon = true;
           score = (int)(destroyedEnemies / timeInLevel * 10000);
 
+          HUD.SetActive(false);
+
           Instantiate(scoreCardUI);
           scoreCardUI
             .GetComponent<ScoreController>()
             .UpdateScore(score);
+
         }
       }
     }

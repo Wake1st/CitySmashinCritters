@@ -2539,6 +2539,7 @@ MonoBehaviour:
   playerPrefab: {fileID: 4839742413397361368, guid: 2d0c8fe538839084d8306de9e283092d, type: 3}
   buildingPrefab: {fileID: 5277587021917206540, guid: 1eba3e97af7cc914fa6c39232550b5fb, type: 3}
   scoreCardUI: {fileID: 1192784243581164561, guid: e42510ef8f361ef42a90a27052de333b, type: 3}
+  HUD: {fileID: 1880518228}
   countdown: 3
   destructionWinCondition: 5
 --- !u!4 &842666720
