@@ -4,7 +4,9 @@ using UnityEngine.SceneManagement;
 public class ScoreController : MonoBehaviour
 {
   [SerializeField]
-  private TMPro.TextMeshProUGUI scoreText = null;
+  private TMPro.TextMeshProUGUI scoreCard = null;
+  [SerializeField]
+  private string scoreText = null;
 
   public string menuScene;
 
@@ -18,7 +20,6 @@ public class ScoreController : MonoBehaviour
 
   public void UpdateScore(int score)
   {
-    scoreText.text = $"Score: {score}";
-    print(scoreText.text);
+    scoreCard.text = scoreText + score.ToString();
   }
 }

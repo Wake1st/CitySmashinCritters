@@ -40,6 +40,11 @@ public class LevelController : MonoBehaviour
     countdownSeconds = Mathf.CeilToInt(countdown);
   }
 
+  private void Start()
+  {
+    scoreCardUI.SetActive(false);
+  }
+
   void InitDestructables()
   {
     Vector2 gridSize = new Vector2(4, 3);
@@ -136,11 +141,10 @@ public class LevelController : MonoBehaviour
 
           HUD.SetActive(false);
 
-          Instantiate(scoreCardUI);
+          scoreCardUI.SetActive(true);
           scoreCardUI
             .GetComponent<ScoreController>()
             .UpdateScore(score);
-
         }
       }
     }
