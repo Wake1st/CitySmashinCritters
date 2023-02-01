@@ -18,7 +18,7 @@ public class ScoreController : MonoBehaviour
 
   public void UpdateScore(int score)
   {
-    print(score);
-    scoreText.text = "Score: " + score;
+    scoreText.text = $"Score: {score}";
+    print(scoreText.text);
   }
 }
