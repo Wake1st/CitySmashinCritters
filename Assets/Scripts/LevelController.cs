@@ -32,10 +32,25 @@ public class LevelController : MonoBehaviour
   public delegate void CountdownChange(string text);
   public static event CountdownChange UpdateCountdown;
 
+  [SerializeField]
+  public GridBuilderProps gridBuilderProps;
+  private GridBuilder gridBuilder;
+
   void Awake()
   {
     Instantiate(playerPrefab, transform.position, transform.rotation);
     InitDestructables();
+
+    GridBuilderProps gridBuilderProps = new GridBuilderProps();
+    gridBuilderProps.surfaceOffset = 0.1f;
+    gridBuilderProps.minimumGridRadial = 0;
+    gridBuilderProps.maximumGridRadial = 5;
+    gridBuilderProps.entropy = 0;
+    gridBuilderProps.medianLineDist = 2;
+    gridBuilderProps.lineDistancePrecisionBoundary = 0.8f;
+
+    gridBuilder = new GridBuilder(gridBuilderProps);
+    gridBuilder.BuildGrid();
 
     countdownSeconds = Mathf.CeilToInt(countdown);
   }
@@ -43,6 +58,12 @@ public class LevelController : MonoBehaviour
   private void Start()
   {
     scoreCardUI.SetActive(false);
+
+    print(
+      gridBuilder.lines[0].Start.ToString()
+      + " | " +
+      gridBuilder.lines[0].End.ToString()
+    );
   }
 
   void InitDestructables()
@@ -71,6 +92,8 @@ public class LevelController : MonoBehaviour
 
   void Update()
   {
+    gridBuilder.DrawLines();
+
     if (isPlaying)
     {
       if (!hasWon)
