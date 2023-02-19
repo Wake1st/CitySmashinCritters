@@ -3,6 +3,10 @@ using UnityEngine;
 
 public class GridBuilderProps
 {
+  //  how many lines are there to be drawn
+  [Min(0)]
+  public float lineCount;
+
   //  points must be a min distance from other points, else they may intersect
   [SerializeField]
   [Min(0f)]
@@ -30,11 +34,11 @@ public class GridBuilderProps
   //  the minimum distance from the origin which lines should not cross
   [SerializeField]
   [Min(0f)]
-  public float minimumGridRadial = 0;
+  public float minimumGridBoundary = 0;
 
   //  the maximum distance from the origin which lines should not cross
   [SerializeField]
-  public float maximumGridRadial;
+  public float maximumGridBoundary;
 
   //  amount the grid is offset from a projected surface
   [SerializeField]
@@ -81,9 +85,88 @@ public class GridBuilder
     //  pick a parent line from existing lines, off of which a new line will be drawn
     //  repeat
 
-    //  create first line
-    Vector3 startPoint = GeneratePoint();
+    FirstLine();
 
+    for (int i = 1; i < props.lineCount; i++)
+    {
+      AddLine();
+    }
+  }
+
+  private void FirstLine()
+  {
+    Vector3 startPoint = GeneratePoint();
+    Vector3 endPoint = GenerateEndPoint(startPoint);
+
+    //  add new line to the list
+    lines.Add(new Line(startPoint, endPoint));
+  }
+
+  private void AddLine()
+  {
+    //  find parent
+    Line parent = lines[
+      Mathf.FloorToInt(Random.Range(0, lines.Count))
+    ];
+
+    //  get start point
+    float lerpFactor = Random.Range(
+      props.minimumIntersectionDistance,
+      1 - props.minimumIntersectionDistance
+    );
+    Vector3 startPoint = lerpFactor * parent.Start
+      + (1 - lerpFactor) * parent.End;
+
+    //  now, get the end point
+    Vector3 endpoint;
+    bool outOfBounds = true;
+    do
+    {
+      //  TODO: this endpoint must be 
+      //  - orthogonal
+      //  - checking crossovers
+      //  - checking intersections
+      endpoint = GenerateEndPoint(startPoint);
+
+      //  check if the endpoint is valid
+      float endX = Mathf.Abs(endpoint.x);
+      float endZ = Mathf.Abs(endpoint.z);
+      float minBound = props.minimumGridBoundary;
+      float maxBound = props.maximumGridBoundary;
+
+      outOfBounds = (endX > maxBound || endX < minBound)
+        && (endZ > maxBound || endZ < minBound);
+
+    } while (outOfBounds);
+
+    //  add it to the list
+    lines.Add(new Line(startPoint, endpoint));
+  }
+
+  private Vector3 GeneratePoint()
+  {
+    float startPointX = Random.Range(
+      props.minimumGridBoundary,
+      props.maximumGridBoundary
+    );
+    float startPointZ = Random.Range(
+      props.minimumGridBoundary,
+      props.maximumGridBoundary
+    );
+
+    //  will set the value as pos or neg
+    float flipX = (Random.value - 0.5f) >= 0 ? 1 : -1;
+    float flipZ = (Random.value - 0.5f) >= 0 ? 1 : -1;
+
+    return new Vector3(
+      flipX * startPointX,
+      props.surfaceOffset,
+      flipZ * startPointZ
+    );
+  }
+
+  private Vector3 GenerateEndPoint(Vector3 startPoint)
+  {
     //  we must determine the "outward"(+) direction
     Vector3 longestAxis = startPoint.x > startPoint.z
       ? new Vector3(startPoint.x, props.surfaceOffset, 0)
@@ -102,37 +185,12 @@ public class GridBuilder
       );
 
     //  finally, calculate the end point
-    Vector3 endPoint = unitFlip * lineDist * outwardUnit
+    return unitFlip * lineDist * outwardUnit
       + new Vector3(
         outwardUnit.x == 0 ? startPoint.x : 0,
         props.surfaceOffset,
         outwardUnit.z == 0 ? startPoint.z : 0
       );
-
-    //  add new line to the list
-    lines.Add(new Line(startPoint, endPoint));
-  }
-
-  private Vector3 GeneratePoint()
-  {
-    float startPointX = Random.Range(
-      props.minimumGridRadial,
-      props.maximumGridRadial
-    );
-    float startPointY = Random.Range(
-      props.minimumGridRadial,
-      props.maximumGridRadial
-    );
-
-    //  will set the value as pos or neg
-    float flipX = (Random.value - 0.5f) >= 0 ? 1 : -1;
-    float flipY = (Random.value - 0.5f) >= 0 ? 1 : -1;
-
-    return new Vector3(
-      flipX * startPointX,
-      props.surfaceOffset,
-      flipY * startPointY
-    );
   }
 
   public void DrawLines()

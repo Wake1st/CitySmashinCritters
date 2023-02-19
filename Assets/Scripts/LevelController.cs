@@ -42,12 +42,14 @@ public class LevelController : MonoBehaviour
     InitDestructables();
 
     GridBuilderProps gridBuilderProps = new GridBuilderProps();
+    gridBuilderProps.lineCount = 4;
     gridBuilderProps.surfaceOffset = 0.1f;
-    gridBuilderProps.minimumGridRadial = 0;
-    gridBuilderProps.maximumGridRadial = 5;
+    gridBuilderProps.minimumGridBoundary = 0;
+    gridBuilderProps.maximumGridBoundary = 5;
     gridBuilderProps.entropy = 0;
     gridBuilderProps.medianLineDist = 2;
     gridBuilderProps.lineDistancePrecisionBoundary = 0.8f;
+    gridBuilderProps.minimumIntersectionDistance = 0.2f;
 
     gridBuilder = new GridBuilder(gridBuilderProps);
     gridBuilder.BuildGrid();
@@ -59,11 +61,11 @@ public class LevelController : MonoBehaviour
   {
     scoreCardUI.SetActive(false);
 
-    print(
-      gridBuilder.lines[0].Start.ToString()
+    gridBuilder.lines.ForEach((line) => print(
+      line.Start.ToString()
       + " | " +
-      gridBuilder.lines[0].End.ToString()
-    );
+      line.End.ToString()
+    ));
   }
 
   void InitDestructables()
