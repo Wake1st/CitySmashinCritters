@@ -39,16 +39,17 @@ public class LevelController : MonoBehaviour
   void Awake()
   {
     Instantiate(playerPrefab, transform.position, transform.rotation);
-    InitDestructables();
+    //InitDestructables();
 
     GridBuilderProps gridBuilderProps = new GridBuilderProps();
-    gridBuilderProps.lineCount = 4;
+    gridBuilderProps.origin = new Vector3(0, 0, 0);
+    gridBuilderProps.lineCount = 34;
     gridBuilderProps.surfaceOffset = 0.1f;
     gridBuilderProps.minimumGridBoundary = 0;
     gridBuilderProps.maximumGridBoundary = 5;
-    gridBuilderProps.entropy = 0;
-    gridBuilderProps.medianLineDist = 2;
-    gridBuilderProps.lineDistancePrecisionBoundary = 0.8f;
+    gridBuilderProps.entropy = .4f;
+    gridBuilderProps.medianLineDist = 4;
+    gridBuilderProps.lineDistancePrecisionBoundary = 0.6f;
     gridBuilderProps.minimumIntersectionDistance = 0.2f;
 
     gridBuilder = new GridBuilder(gridBuilderProps);
@@ -62,9 +63,11 @@ public class LevelController : MonoBehaviour
     scoreCardUI.SetActive(false);
 
     gridBuilder.lines.ForEach((line) => print(
-      line.Start.ToString()
-      + " | " +
-      line.End.ToString()
+      gridBuilder.PrintLineMsg(line)
+    ));
+
+    print(gridBuilder.ParentNormal(
+      gridBuilder.lines[0]
     ));
   }
 
@@ -95,6 +98,8 @@ public class LevelController : MonoBehaviour
   void Update()
   {
     gridBuilder.DrawLines();
+    // gridBuilder.DrawLine(0);
+    // gridBuilder.DrawLine(1);
 
     if (isPlaying)
     {

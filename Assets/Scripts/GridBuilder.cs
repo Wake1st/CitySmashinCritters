@@ -95,8 +95,8 @@ public class GridBuilder
 
   private void FirstLine()
   {
-    Vector3 startPoint = GeneratePoint();
-    Vector3 endPoint = GenerateEndPoint(startPoint);
+    Vector3 startPoint = GenerateFreeStartPoint();
+    Vector3 endPoint = GenerateFreeEndPoint(startPoint);
 
     //  add new line to the list
     lines.Add(new Line(startPoint, endPoint));
@@ -126,7 +126,11 @@ public class GridBuilder
       //  - orthogonal
       //  - checking crossovers
       //  - checking intersections
-      endpoint = GenerateEndPoint(startPoint);
+
+      endpoint = GenerateBranchingEndPoint(
+        startPoint,
+        parent
+      );
 
       //  check if the endpoint is valid
       float endX = Mathf.Abs(endpoint.x);
@@ -143,7 +147,7 @@ public class GridBuilder
     lines.Add(new Line(startPoint, endpoint));
   }
 
-  private Vector3 GeneratePoint()
+  private Vector3 GenerateFreeStartPoint()
   {
     float startPointX = Random.Range(
       props.minimumGridBoundary,
@@ -165,7 +169,29 @@ public class GridBuilder
     );
   }
 
-  private Vector3 GenerateEndPoint(Vector3 startPoint)
+  private Vector3 GenerateBranchingStartPoint()
+  {
+    float startPointX = Random.Range(
+      props.minimumGridBoundary,
+      props.maximumGridBoundary
+    );
+    float startPointZ = Random.Range(
+      props.minimumGridBoundary,
+      props.maximumGridBoundary
+    );
+
+    //  will set the value as pos or neg
+    float flipX = (Random.value - 0.5f) >= 0 ? 1 : -1;
+    float flipZ = (Random.value - 0.5f) >= 0 ? 1 : -1;
+
+    return new Vector3(
+      flipX * startPointX,
+      props.surfaceOffset,
+      flipZ * startPointZ
+    );
+  }
+
+  private Vector3 GenerateFreeEndPoint(Vector3 startPoint)
   {
     //  we must determine the "outward"(+) direction
     Vector3 longestAxis = startPoint.x > startPoint.z
@@ -193,6 +219,44 @@ public class GridBuilder
       );
   }
 
+  private Vector3 GenerateBranchingEndPoint(
+    Vector3 startPoint,
+    Line parent
+  )
+  {
+    //  we must determine the "outward"(+) direction
+    Vector3 outwardUnit = ParentNormal(parent);
+    Vector3 toOrigin = props.origin - startPoint;
+    float direction = Vector3.Dot(outwardUnit, toOrigin) >= 0 ? 1 : -1;
+
+    //  now, we will check to flip the direction of the line
+    float unitFlip = (props.entropy - Random.value) > 0 ? 1 : -1;
+
+    //  get the line distance
+    float lineDist = props.medianLineDist
+      + props.medianLineDist * Random.Range(
+        props.lineDistancePrecisionBoundary - 1,
+        1 - props.lineDistancePrecisionBoundary
+      );
+
+    //  finally, calculate the end point
+    return direction * unitFlip * lineDist * outwardUnit
+      + new Vector3(
+        outwardUnit.x == 0 ? startPoint.x : 0,
+        props.surfaceOffset,
+        outwardUnit.z == 0 ? startPoint.z : 0
+      );
+  }
+
+  public Vector3 ParentNormal(Line parent)
+  {
+    Vector3 parentVector = parent.Start - parent.End;
+    return Vector3.Cross(
+      parentVector,
+      Vector3.up
+    ).normalized;
+  }
+
   public void DrawLines()
   {
     Color lineColor = new Color(1f, 0f, 0f);
@@ -200,5 +264,22 @@ public class GridBuilder
     {
       Debug.DrawLine(line.Start, line.End, lineColor);
     }
+  }
+
+  public void DrawLine(int index)
+  {
+    Color lineColor = new Color(1f, 0f, 0f);
+    Debug.DrawLine(
+      lines[index].Start,
+      lines[index].End,
+      lineColor
+    );
+  }
+
+  public string PrintLineMsg(Line line)
+  {
+    return "> start: " + line.Start.ToString() +
+      " | end: " + line.End.ToString() +
+      " | dist: " + Vector3.Distance(line.Start, line.End);
   }
 }
