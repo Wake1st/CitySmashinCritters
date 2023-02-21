@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Utils;
 
 public class GridBuilderProps
 {
@@ -123,7 +124,6 @@ public class GridBuilder
     do
     {
       //  TODO: this endpoint must be 
-      //  - orthogonal
       //  - checking crossovers
       //  - checking intersections
 
@@ -131,6 +131,9 @@ public class GridBuilder
         startPoint,
         parent
       );
+
+      //  now we must check for crossover/intersection
+      endpoint = IntersectCheck(startPoint, endpoint);
 
       //  check if the endpoint is valid
       float endX = Mathf.Abs(endpoint.x);
@@ -248,13 +251,43 @@ public class GridBuilder
       );
   }
 
-  public Vector3 ParentNormal(Line parent)
+  private Vector3 ParentNormal(Line parent)
   {
     Vector3 parentVector = parent.Start - parent.End;
     return Vector3.Cross(
       parentVector,
       Vector3.up
     ).normalized;
+  }
+
+  //  if the line premeturely ends, the new endpoint is returned
+  private Vector3 IntersectCheck(
+    Vector3 startPoint,
+    Vector3 endPoint
+  )
+  {
+    //  Collect all intersecting lines
+    List<Line> intersectingLines = new List<Line>();
+    foreach (Line line in lines)
+    {
+      if (Math.DoIntersect(
+        Math.Vector3To2(startPoint),
+        Math.Vector3To2(endPoint),
+        Math.Vector3To2(line.Start),
+        Math.Vector3To2(line.End)
+      )) intersectingLines.Add(line);
+    }
+
+    //  Now, we must order the lines closest-furthest 
+    //  from the start point
+
+    //  Finally, check each intersection for crossover
+    foreach (Line line in intersectingLines)
+    {
+
+    }
+
+    return endPoint;
   }
 
   public void DrawLines()

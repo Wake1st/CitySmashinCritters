@@ -62,13 +62,9 @@ public class LevelController : MonoBehaviour
   {
     scoreCardUI.SetActive(false);
 
-    gridBuilder.lines.ForEach((line) => print(
-      gridBuilder.PrintLineMsg(line)
-    ));
-
-    print(gridBuilder.ParentNormal(
-      gridBuilder.lines[0]
-    ));
+    // gridBuilder.lines.ForEach((line) => print(
+    //   gridBuilder.PrintLineMsg(line)
+    // ));
   }
 
   void InitDestructables()
@@ -98,8 +94,6 @@ public class LevelController : MonoBehaviour
   void Update()
   {
     gridBuilder.DrawLines();
-    // gridBuilder.DrawLine(0);
-    // gridBuilder.DrawLine(1);
 
     if (isPlaying)
     {
