@@ -63,10 +63,15 @@ public class Line
   {
     Start = start;
     End = end;
+    Points = new List<Vector3>() {
+      start,
+      end
+    };
   }
 
   public Vector3 Start { get; set; }
   public Vector3 End { get; set; }
+  public List<Vector3> Points { get; set; }
 }
 
 public class GridBuilder
@@ -105,18 +110,55 @@ public class GridBuilder
 
   private void AddLine()
   {
+    //  keep track of where new line point will be inserted
+    int insertIndex = 1;
+
     //  find parent
-    Line parent = lines[
-      Mathf.FloorToInt(Random.Range(0, lines.Count))
-    ];
+    Line parent;
 
     //  get start point
-    float lerpFactor = Random.Range(
-      props.minimumIntersectionDistance,
-      1 - props.minimumIntersectionDistance
-    );
-    Vector3 startPoint = lerpFactor * parent.Start
-      + (1 - lerpFactor) * parent.End;
+    Vector3 startPoint = Vector3.zero;
+    List<Line> possibleParents = lines;
+    bool hasStart = false;
+    do
+    {
+      parent = possibleParents[
+        Mathf.FloorToInt(Random.Range(0, possibleParents.Count))
+      ];
+
+      for (int i = 0; i < parent.Points.Count - 1; i++)
+      {
+        float dist = Vector3.Distance(
+          parent.Points[i],
+          parent.Points[i + 1]
+        );
+
+        if (dist > props.minimumIntersectionDistance)
+        {
+          float minIntersectRatio = props.minimumIntersectionDistance / dist;
+          float lerpFactor = Random.Range(
+            minIntersectRatio,
+            1 - minIntersectRatio
+          );
+
+          startPoint = Vector3.Lerp(
+            parent.Start,
+            parent.End,
+            lerpFactor
+          );
+
+          insertIndex = i + 1;
+        }
+      }
+
+      if (startPoint != Vector3.zero) hasStart = true;
+
+      if (!hasStart)
+      {
+        possibleParents.Remove(parent);
+        startPoint = Vector3.zero;
+      }
+    } while (!hasStart);
 
     //  now, get the end point
     Vector3 endpoint;
@@ -148,6 +190,9 @@ public class GridBuilder
 
     //  add it to the list
     lines.Add(new Line(startPoint, endpoint));
+
+    //  add start point to it's parent
+    parent.Points.Insert(insertIndex, startPoint);
   }
 
   private Vector3 GenerateFreeStartPoint()
@@ -278,13 +323,52 @@ public class GridBuilder
       )) intersectingLines.Add(line);
     }
 
-    //  Now, we must order the lines closest-furthest 
-    //  from the start point
-
-    //  Finally, check each intersection for crossover
+    //  First, find where the lines cross
+    List<(Line, Vector3, float)> crossovers = new List<(Line, Vector3, float)>();
     foreach (Line line in intersectingLines)
     {
+      Vector2 flatIntersect = Math.FindIntersect(
+        Math.Vector3To2(startPoint),
+        Math.Vector3To2(endPoint),
+        Math.Vector3To2(line.Start),
+        Math.Vector3To2(line.End)
+      );
+      Vector3 intersect = new Vector3(
+        flatIntersect.x,
+        props.surfaceOffset,
+        flatIntersect.y
+      );
 
+      crossovers.Add((
+        line,
+        intersect,
+        Vector3.Distance(startPoint, intersect)
+      ));
+    }
+
+    //  Now, we must order the lines closest-furthest 
+    //  from the start point
+    crossovers.Sort((x, y) => x.Item3.CompareTo(y.Item3));
+
+    //  Finally, check each intersection for crossover
+    float minIntersectDist = props.minimumIntersectionDistance;
+    foreach ((Line, Vector3, float) crossover in crossovers)
+    {
+      //  check line for points close enough for intersect
+      foreach (Vector3 point in crossover.Item1.Points)
+      {
+        float dist = Vector3.Distance(point, crossover.Item2);
+        if (dist < minIntersectDist)
+        {
+          return point;
+        }
+      }
+
+      //  now, check for crossover
+      if (Random.value > props.crossoverPossibility)
+      {
+        return crossover.Item2;
+      }
     }
 
     return endPoint;

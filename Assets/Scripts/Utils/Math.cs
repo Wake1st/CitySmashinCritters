@@ -33,8 +33,11 @@ namespace Utils
     //  source: https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
     static bool onSegment(Vector2 p, Vector2 q, Vector2 r)
     {
-      if (q.x <= Mathf.Max(p.x, r.x) && q.x >= Mathf.Min(p.x, r.x) &&
-          q.y <= Mathf.Max(p.y, r.y) && q.y >= Mathf.Min(p.y, r.y))
+      if (q.x <= Mathf.Max(p.x, r.x)
+        && q.x >= Mathf.Min(p.x, r.x)
+        && q.y <= Mathf.Max(p.y, r.y)
+        && q.y >= Mathf.Min(p.y, r.y)
+      )
         return true;
 
       return false;
@@ -43,7 +46,12 @@ namespace Utils
     // The main function that returns true if line segment 'p1q1'
     // and 'p2q2' intersect.
     //  source: https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
-    public static bool DoIntersect(Vector2 p1, Vector2 q1, Vector2 p2, Vector2 q2)
+    public static bool DoIntersect(
+      Vector2 p1,
+      Vector2 q1,
+      Vector2 p2,
+      Vector2 q2
+    )
     {
       // Find the four orientations needed for general and
       // special cases
@@ -70,6 +78,27 @@ namespace Utils
       if (o4 == 0 && onSegment(p2, q1, q2)) return true;
 
       return false; // Doesn't fall in any of the above cases
+    }
+
+    private static float CrossVec2(Vector2 v1, Vector2 v2)
+    {
+      return v1.x * v2.y - v1.y * v2.x;
+    }
+
+    public static Vector2 FindIntersect(
+      Vector2 p1,
+      Vector2 p2,
+      Vector2 q1,
+      Vector2 q2
+    )
+    {
+      Vector2 r = p2 - p1;
+      Vector2 s = q2 - q1;
+
+      float rXs = CrossVec2(r, s);
+      float t = CrossVec2(q1 - p1, s) / rXs;
+
+      return p1 + t * r;
     }
   }
 }
