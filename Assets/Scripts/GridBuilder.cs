@@ -118,7 +118,7 @@ public class GridBuilder
 
     //  get start point
     Vector3 startPoint = Vector3.zero;
-    List<Line> possibleParents = lines;
+    List<Line> possibleParents = new List<Line>(lines);
     bool hasStart = false;
     do
     {
@@ -175,7 +175,7 @@ public class GridBuilder
       );
 
       //  now we must check for crossover/intersection
-      endpoint = IntersectCheck(startPoint, endpoint);
+      endpoint = IntersectCheck(startPoint, endpoint, parent);
 
       //  check if the endpoint is valid
       float endX = Mathf.Abs(endpoint.x);
@@ -308,12 +308,16 @@ public class GridBuilder
   //  if the line premeturely ends, the new endpoint is returned
   private Vector3 IntersectCheck(
     Vector3 startPoint,
-    Vector3 endPoint
+    Vector3 endPoint,
+    Line parent
   )
   {
     //  Collect all intersecting lines
+    //  TODO: exclude parent line!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    List<Line> allButParent = new List<Line>(lines);
+    allButParent.Remove(parent);
     List<Line> intersectingLines = new List<Line>();
-    foreach (Line line in lines)
+    foreach (Line line in allButParent)
     {
       if (Math.DoIntersect(
         Math.Vector3To2(startPoint),

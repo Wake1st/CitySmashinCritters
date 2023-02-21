@@ -43,14 +43,14 @@ public class LevelController : MonoBehaviour
 
     GridBuilderProps gridBuilderProps = new GridBuilderProps();
     gridBuilderProps.origin = new Vector3(0, 0, 0);
-    gridBuilderProps.lineCount = 12;
+    gridBuilderProps.lineCount = 28;
     gridBuilderProps.surfaceOffset = 0.1f;
     gridBuilderProps.minimumGridBoundary = 0;
     gridBuilderProps.maximumGridBoundary = 5;
     gridBuilderProps.entropy = 0.4f;
     gridBuilderProps.medianLineDist = 4;
-    gridBuilderProps.lineDistancePrecisionBoundary = 0.8f;
-    gridBuilderProps.minimumIntersectionDistance = 1f;
+    gridBuilderProps.lineDistancePrecisionBoundary = 0.6f;
+    gridBuilderProps.minimumIntersectionDistance = .5f;
     gridBuilderProps.crossoverPossibility = 0.2f;
 
     gridBuilder = new GridBuilder(gridBuilderProps);
