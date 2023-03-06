@@ -298,7 +298,7 @@ InputManager:
     descriptiveName: 
     descriptiveNegativeName: 
     negativeButton: 
-    positiveButton: q
+    positiveButton: e
     altNegativeButton: 
     altPositiveButton: 
     gravity: 0
@@ -313,7 +313,7 @@ InputManager:
     m_Name: RotateCCW
     descriptiveName: 
     descriptiveNegativeName: 
-    negativeButton: e
+    negativeButton: q
     positiveButton: 
     altNegativeButton: 
     altPositiveButton: 

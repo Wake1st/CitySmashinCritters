@@ -35,7 +35,7 @@ public class LevelController : MonoBehaviour
   void Awake()
   {
     Instantiate(playerPrefab, transform.position, transform.rotation);
-    InitDestructables();
+    // InitDestructables();
 
     countdownSeconds = Mathf.CeilToInt(countdown);
   }
