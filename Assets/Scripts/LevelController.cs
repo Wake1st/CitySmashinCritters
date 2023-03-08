@@ -9,7 +9,7 @@ public class LevelController : MonoBehaviour
   public GameObject HUD;
 
   private int maxDestructables = 12;
-  private List<GameObject> destructables = new List<GameObject>();
+  public List<GameObject> destructables = new List<GameObject>();
 
   public float countdown = 3.8f;
   private float maxLvlStartMsgTime = 1.6f;
@@ -34,7 +34,7 @@ public class LevelController : MonoBehaviour
 
   void Awake()
   {
-    Instantiate(playerPrefab, transform.position, transform.rotation);
+    // Instantiate(playerPrefab, transform.position, transform.rotation);
     // InitDestructables();
 
     countdownSeconds = Mathf.CeilToInt(countdown);
@@ -45,29 +45,29 @@ public class LevelController : MonoBehaviour
     scoreCardUI.SetActive(false);
   }
 
-  void InitDestructables()
-  {
-    Vector2 gridSize = new Vector2(4, 3);
-    Vector2 gridOffset = new Vector2(-1.5f, -1.5f);
+  // void InitDestructables()
+  // {
+  //   Vector2 gridSize = new Vector2(4, 3);
+  //   Vector2 gridOffset = new Vector2(-1.5f, -1.5f);
 
-    for (int i = 0; i < maxDestructables; i++)
-    {
-      GameObject building = Instantiate(
-          buildingPrefab,
-          new Vector3(
-              gridOffset.x + i % gridSize.x + Random.Range(-0.2f, 0.2f),
-              0.5f,
-              gridOffset.y + i / (int)gridSize.y + Random.Range(-0.3f, -0.3f)
-          ),
-          transform.rotation
-      );
+  //   for (int i = 0; i < maxDestructables; i++)
+  //   {
+  //     GameObject building = Instantiate(
+  //         buildingPrefab,
+  //         new Vector3(
+  //             gridOffset.x + i % gridSize.x + Random.Range(-0.2f, 0.2f),
+  //             0.5f,
+  //             gridOffset.y + i / (int)gridSize.y + Random.Range(-0.3f, -0.3f)
+  //         ),
+  //         transform.rotation
+  //     );
 
-      //  must rename for a unique name
-      building.name += i.ToString();
+  //     //  must rename for a unique name
+  //     building.name += i.ToString();
 
-      destructables.Add(building);
-    }
-  }
+  //     destructables.Add(building);
+  //   }
+  // }
 
   void Update()
   {

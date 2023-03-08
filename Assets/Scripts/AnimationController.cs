@@ -14,11 +14,13 @@ public class AnimationController : MonoBehaviour
 
   private AttackProfile attackProfile;
   private Transform parent;
+  private Vector3 initialAttitude;
 
   private void Awake()
   {
     upright = this.transform.rotation;
     parent = this.transform.parent;
+    initialAttitude = parent.rotation.eulerAngles;
 
     attackProfile = new AttackProfile();
 
@@ -29,8 +31,8 @@ public class AnimationController : MonoBehaviour
   {
     if (collapsing)
     {
-      Sink();
       Shake();
+      Sink();
     }
     else if (isHit)
     {
@@ -54,11 +56,11 @@ public class AnimationController : MonoBehaviour
 
   private void Sink()
   {
-    float topOfParent = topOfParent = parent.localPosition.y
+    float topOfParent = parent.localPosition.y
             + (parent.transform.localScale.y);
 
     parent.Translate(
-        new Vector3(0, -1, 0) * collapseSpeed * Time.deltaTime
+        new Vector3(0, 0, -1) * collapseSpeed * Time.deltaTime
     );
 
     collapsing = topOfParent > 0;
@@ -68,9 +70,9 @@ public class AnimationController : MonoBehaviour
   {
     //  set the building to rotate
     Quaternion localRotate = Quaternion.Euler(
-        Random.Range(-shake, shake),
-        0,
-        Random.Range(-shake, shake)
+        initialAttitude.x + Random.Range(-shake, shake),
+        initialAttitude.y + 0,
+        initialAttitude.z + Random.Range(-shake, shake)
     );
     parent.rotation = localRotate;
   }
@@ -85,6 +87,6 @@ public class AnimationController : MonoBehaviour
 
   private void EndShake()
   {
-    parent.rotation = upright;
+    parent.rotation = Quaternion.Euler(initialAttitude);
   }
 }
