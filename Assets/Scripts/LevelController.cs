@@ -19,7 +19,7 @@ public class LevelController : MonoBehaviour
   private int score = 0;
   private float timeInLevel = 0f;
   [SerializeField]
-  private int destructionWinCondition = 5;
+  private int destructionWinCondition;
 
   public delegate void TimeChange(float time);
   public static event TimeChange UpdateTime;
@@ -126,9 +126,11 @@ public class LevelController : MonoBehaviour
     foreach (GameObject destructable in destructables)
     {
       bool isAlive = GameObject
-          .Find(destructable.name + "/Health")
-          .GetComponent<DestructableHealthController>()
-          .IsAlive();
+        .Find(destructable.name)
+        .transform.GetChild(0)
+        .transform.GetChild(0)
+        .GetComponent<DestructableHealthController>()
+        .IsAlive();
 
       if (!isAlive)
       {
